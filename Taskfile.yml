@@ -44,3 +44,34 @@ tasks:
     desc: Show the Supabase migration SQL that needs to be run
     cmds:
       - cat supabase/migrations/001_initial_schema.sql
+
+  supabase:start:
+    desc: Start local Supabase instance
+    cmds:
+      - npx supabase start
+
+  supabase:stop:
+    desc: Stop local Supabase instance
+    cmds:
+      - npx supabase stop
+
+  supabase:status:
+    desc: Show status of local Supabase instance
+    cmds:
+      - npx supabase status
+
+  supabase:reset:
+    desc: Reset local database and run migrations
+    cmds:
+      - npx supabase db reset
+
+  supabase:gen-types:
+    desc: Generate TypeScript types from database schema
+    cmds:
+      - npx supabase gen types typescript --local > src/types/database.types.ts
+
+  dev:local:
+    desc: Start both Supabase and Vite dev server for local development
+    deps: [supabase:start]
+    cmds:
+      - npm run dev

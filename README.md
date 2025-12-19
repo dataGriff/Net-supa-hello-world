@@ -82,14 +82,48 @@ task install
 
 ### 3. Set Up Supabase
 
-#### Create a Supabase Project
+You can run Supabase either locally (recommended for development) or use a hosted instance.
+
+#### Option A: Local Supabase (Recommended for Development)
+
+This option runs Supabase locally using Docker. You need Docker installed and running.
+
+1. **Start local Supabase:**
+   ```bash
+   npm run supabase:start
+   # or using Task
+   task supabase:start
+   ```
+
+2. **The local Supabase will be available at:**
+   - API URL: `http://127.0.0.1:54321`
+   - Studio (Dashboard): `http://127.0.0.1:54323`
+   - Inbucket (Email testing): `http://127.0.0.1:54324`
+
+3. **Environment variables are pre-configured in `.env.local`** (uses default local credentials)
+
+4. **Reset the database (runs migrations and seeds):**
+   ```bash
+   npm run supabase:reset
+   # or using Task
+   task supabase:reset
+   ```
+
+5. **Stop Supabase when done:**
+   ```bash
+   npm run supabase:stop
+   # or using Task
+   task supabase:stop
+   ```
+
+#### Option B: Hosted Supabase (For Production)
 
 1. Go to [https://supabase.com](https://supabase.com)
 2. Click "Start your project" and sign up/login
 3. Create a new project
 4. Note your project URL and anon key
 
-#### Run the Database Migration
+##### Run the Database Migration
 
 1. In your Supabase dashboard, go to the SQL Editor
 2. Copy the contents of `supabase/migrations/001_initial_schema.sql`
@@ -102,17 +136,26 @@ This will create:
 - `user_roles` table for admin management
 - Row Level Security policies for data protection
 
+##### Run the Seed Data
+
+1. In Supabase SQL Editor, also run the contents of `supabase/seed.sql`
+2. This will populate the database with sample products
+
 #### Create an Admin User
 
 After running the migration, you need to create an admin user:
 
 1. Sign up for a regular account through the app
-2. In Supabase dashboard, go to Table Editor → `user_roles`
+2. In Supabase dashboard (local: http://127.0.0.1:54323, or cloud dashboard), go to Table Editor → `user_roles`
 3. Insert a new row:
    - `user_id`: (copy your user ID from `auth.users` table)
    - `role`: 'admin'
 
 ### 4. Configure Environment Variables
+
+**For local development (Option A):** Environment is pre-configured in `.env.local` - no changes needed.
+
+**For hosted Supabase (Option B):**
 
 ```bash
 # Copy the example env file
@@ -211,6 +254,24 @@ task lint            # Run ESLint
 task setup           # Initial setup (copy .env.example)
 task clean           # Clean build artifacts
 task supabase-migration  # View the Supabase migration SQL
+
+# Supabase Local Development
+task supabase:start   # Start local Supabase instance
+task supabase:stop    # Stop local Supabase instance
+task supabase:status  # Show status of local Supabase
+task supabase:reset   # Reset database and run migrations
+task supabase:gen-types  # Generate TypeScript types from schema
+task dev:local        # Start Supabase + Vite dev server
+```
+
+You can also use npm scripts directly:
+
+```bash
+npm run supabase:start    # Start local Supabase
+npm run supabase:stop     # Stop local Supabase
+npm run supabase:status   # Check Supabase status
+npm run supabase:reset    # Reset database
+npm run supabase:gen:types  # Generate TypeScript types
 ```
 
 ## 🔒 Security Features
