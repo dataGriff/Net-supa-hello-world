@@ -24,8 +24,13 @@ tasks:
         else
           echo "✅ .env file already exists"
         fi
-      - echo "📦 Installing dependencies..."
-      - npm install
+      - |
+        if [ ! -d node_modules ]; then
+          echo "📦 Installing dependencies..."
+          npm install
+        else
+          echo "✅ Dependencies already installed"
+        fi
       - echo "🐳 Starting local Supabase (requires Docker)..."
       - npx supabase start
       - echo ""
@@ -34,6 +39,14 @@ tasks:
       - echo "📊 Supabase Studio at http://127.0.0.1:54323"
       - echo ""
       - npx netlify dev
+
+  stop:
+    desc: "🛑 Stop all running services (Supabase and Netlify dev)"
+    cmds:
+      - echo "🛑 Stopping all services..."
+      - pkill -f "netlify dev" || true
+      - npx supabase stop || true
+      - echo "✅ All services stopped"
 
   install:
     desc: Install all dependencies
@@ -122,3 +135,65 @@ tasks:
     cmds:
       - npm run build
       - npx netlify serve
+
+  # ===========================================
+  # 🔄 CI/CD Tasks
+  # ===========================================
+  test:
+    desc: Run health checks to verify application is running correctly
+    vars:
+      SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0"
+    cmds:
+      - echo "🔍 Running tests..."
+      - |
+        echo "Testing application health..."
+        max_attempts=24
+        attempt=0
+        while [ $attempt -lt $max_attempts ]; do
+          if curl -s -o /dev/null -w "%{http_code}" http://localhost:8888 | grep -q "200"; then
+            echo "✅ Application is responding on port 8888"
+            break
+          fi
+          attempt=$((attempt + 1))
+          echo "Attempt $attempt/$max_attempts - Waiting for app to be ready..."
+          sleep 5
+        done
+        if [ $attempt -eq $max_attempts ]; then
+          echo "❌ Application failed to start within timeout"
+          exit 1
+        fi
+      - |
+        echo "Verifying page content..."
+        response=$(curl -s http://localhost:8888)
+        if echo "$response" | grep -q "<html"; then
+          echo "✅ HTML content received"
+        else
+          echo "❌ No HTML content in response"
+          exit 1
+        fi
+        if echo "$response" | grep -q "root"; then
+          echo "✅ React root element found"
+        else
+          echo "❌ React root element not found"
+          exit 1
+        fi
+      - |
+        echo "Testing Supabase API health..."
+        if curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:54321/rest/v1/ -H "apikey: {{.SUPABASE_ANON_KEY}}" | grep -q "200"; then
+          echo "✅ Supabase API is accessible"
+        else
+          echo "❌ Cannot reach Supabase API"
+          exit 1
+        fi
+      - echo "✅ All tests passed!"
+
+  ci:
+    desc: Run full CI pipeline (lint, build, start, test)
+    cmds:
+      - echo "🔄 Running CI pipeline..."
+      - task: lint
+      - task: build
+      - echo "🚀 Starting application in background..."
+      - task start &
+      - task: test
+      - task: stop
