@@ -1,0 +1,46 @@
+version: '3'
+
+vars:
+  PROJECT_DIR: '{{.PWD}}'
+
+tasks:
+  install:
+    desc: Install all dependencies
+    cmds:
+      - npm install
+
+  dev:
+    desc: Start the development server
+    cmds:
+      - npm run dev
+
+  build:
+    desc: Build the application for production
+    cmds:
+      - npm run build
+
+  preview:
+    desc: Preview the production build locally
+    cmds:
+      - npm run preview
+
+  lint:
+    desc: Run ESLint to check code quality
+    cmds:
+      - npm run lint
+
+  setup:
+    desc: Initial project setup - copy .env.example to .env
+    cmds:
+      - cp .env.example .env
+      - echo "Please edit .env file with your Supabase credentials"
+
+  clean:
+    desc: Clean build artifacts and node_modules
+    cmds:
+      - rm -rf dist node_modules
+
+  supabase-migration:
+    desc: Show the Supabase migration SQL that needs to be run
+    cmds:
+      - cat supabase/migrations/001_initial_schema.sql
