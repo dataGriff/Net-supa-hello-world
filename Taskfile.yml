@@ -8,8 +8,22 @@ tasks:
   # 🚀 QUICK START - Run this to get going!
   # ===========================================
   start:
-    desc: "🚀 One command to start everything: install deps, start Supabase, and run the app"
+    desc: "🚀 One command to start everything: install deps, setup env, start Supabase, and run the app"
     cmds:
+      - echo "🔧 Checking environment setup..."
+      - |
+        if [ ! -f .env ]; then
+          echo "📝 Creating .env file with local development settings..."
+          cat > .env << 'EOF'
+        # Supabase Configuration for Local Development
+        # These settings work with the local Supabase instance started by 'npx supabase start'
+        VITE_SUPABASE_URL=http://127.0.0.1:54321
+        VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0
+        EOF
+          echo "✅ Local development .env file created successfully"
+        else
+          echo "✅ .env file already exists"
+        fi
       - echo "📦 Installing dependencies..."
       - npm install
       - echo "🐳 Starting local Supabase (requires Docker)..."
