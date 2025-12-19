@@ -1,0 +1,124 @@
+version: '3'
+
+vars:
+  PROJECT_DIR: '{{.PWD}}'
+
+tasks:
+  # ===========================================
+  # 🚀 QUICK START - Run this to get going!
+  # ===========================================
+  start:
+    desc: "🚀 One command to start everything: install deps, setup env, start Supabase, and run the app"
+    cmds:
+      - echo "🔧 Checking environment setup..."
+      - |
+        if [ ! -f .env ]; then
+          echo "📝 Creating .env file with local development settings..."
+          cat > .env << 'EOF'
+        # Supabase Configuration for Local Development
+        # These settings work with the local Supabase instance started by 'npx supabase start'
+        VITE_SUPABASE_URL=http://127.0.0.1:54321
+        VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0
+        EOF
+          echo "✅ Local development .env file created successfully"
+        else
+          echo "✅ .env file already exists"
+        fi
+      - echo "📦 Installing dependencies..."
+      - npm install
+      - echo "🐳 Starting local Supabase (requires Docker)..."
+      - npx supabase start
+      - echo ""
+      - echo "✅ Setup complete! Starting the app..."
+      - echo "🌐 App will be available at http://localhost:8888"
+      - echo "📊 Supabase Studio at http://127.0.0.1:54323"
+      - echo ""
+      - npx netlify dev
+
+  install:
+    desc: Install all dependencies
+    cmds:
+      - npm install
+
+  dev:
+    desc: Start the development server
+    cmds:
+      - npm run dev
+
+  build:
+    desc: Build the application for production
+    cmds:
+      - npm run build
+
+  preview:
+    desc: Preview the production build locally
+    cmds:
+      - npm run preview
+
+  lint:
+    desc: Run ESLint to check code quality
+    cmds:
+      - npm run lint
+
+  setup:
+    desc: Initial project setup - copy .env.example to .env
+    cmds:
+      - cp .env.example .env
+      - echo "Please edit .env file with your Supabase credentials"
+
+  clean:
+    desc: Clean build artifacts and node_modules
+    cmds:
+      - rm -rf dist node_modules
+
+  supabase-migration:
+    desc: Show the Supabase migration SQL that needs to be run
+    cmds:
+      - cat supabase/migrations/001_initial_schema.sql
+
+  supabase:start:
+    desc: Start local Supabase instance
+    cmds:
+      - npx supabase start
+
+  supabase:stop:
+    desc: Stop local Supabase instance
+    cmds:
+      - npx supabase stop
+
+  supabase:status:
+    desc: Show status of local Supabase instance
+    cmds:
+      - npx supabase status
+
+  supabase:reset:
+    desc: Reset local database and run migrations
+    cmds:
+      - npx supabase db reset
+
+  supabase:gen-types:
+    desc: Generate TypeScript types from database schema
+    cmds:
+      - npx supabase gen types typescript --local > src/types/database.types.ts
+
+  dev:local:
+    desc: Start both Supabase and Vite dev server for local development
+    deps: [supabase:start]
+    cmds:
+      - npm run dev
+
+  netlify:dev:
+    desc: Start Netlify dev server (simulates Netlify environment locally)
+    cmds:
+      - npx netlify dev
+
+  netlify:build:
+    desc: Build using Netlify build process
+    cmds:
+      - npx netlify build
+
+  netlify:serve:
+    desc: Build and serve production build with Netlify
+    cmds:
+      - npm run build
+      - npx netlify serve
