@@ -2,7 +2,37 @@
 
 A modern full-stack e-commerce application built with React TypeScript, Supabase, and Netlify.
 
-## 🚀 Features
+## 🚀 Quick Start
+
+Get up and running with a single command (requires Docker):
+
+```bash
+task start
+# or using npm
+npm start
+```
+
+This will:
+1. 📦 Install all dependencies
+2. 🐳 Start local Supabase (PostgreSQL, Auth, Storage)
+3. 🌐 Start the app with Netlify dev server
+
+**Once running, you'll have:**
+
+| Service | URL |
+|---------|-----|
+| **App** | http://localhost:8888 (via Netlify) or http://localhost:5173 (direct Vite) |
+| **Supabase Studio** | http://127.0.0.1:54323 |
+| **Supabase API** | http://127.0.0.1:54321 |
+| **Email Testing** | http://127.0.0.1:54324 |
+
+> **Note**: If port 5173 is busy, Vite may use 5174 or the next available port. Check the terminal output for the actual URL.
+
+To stop everything: `task supabase:stop` or `npm run supabase:stop`
+
+---
+
+## ✨ Features
 
 - **User Authentication**: Sign up, login, and secure authentication with Supabase Auth
 - **Product Catalog**: Browse products with detailed information
@@ -25,9 +55,10 @@ A modern full-stack e-commerce application built with React TypeScript, Supabase
 
 - Node.js 20 or higher
 - npm or yarn
-- A Supabase account (free tier works)
-- A Netlify account (free tier works)
+- Docker (for local Supabase development)
 - [Task](https://taskfile.dev/) (optional, for using Taskfile commands)
+
+> **Note**: For production deployment, you'll need a [Supabase](https://supabase.com) account and a [Netlify](https://netlify.com) account (free tiers work).
 
 ## 🏗️ Project Structure
 
