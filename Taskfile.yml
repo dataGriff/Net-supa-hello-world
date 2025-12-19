@@ -4,6 +4,23 @@ vars:
   PROJECT_DIR: '{{.PWD}}'
 
 tasks:
+  # ===========================================
+  # 🚀 QUICK START - Run this to get going!
+  # ===========================================
+  start:
+    desc: "🚀 One command to start everything: install deps, start Supabase, and run the app"
+    cmds:
+      - echo "📦 Installing dependencies..."
+      - npm install
+      - echo "🐳 Starting local Supabase (requires Docker)..."
+      - npx supabase start
+      - echo ""
+      - echo "✅ Setup complete! Starting the app..."
+      - echo "🌐 App will be available at http://localhost:8888"
+      - echo "📊 Supabase Studio at http://127.0.0.1:54323"
+      - echo ""
+      - npx netlify dev
+
   install:
     desc: Install all dependencies
     cmds:
@@ -75,3 +92,19 @@ tasks:
     deps: [supabase:start]
     cmds:
       - npm run dev
+
+  netlify:dev:
+    desc: Start Netlify dev server (simulates Netlify environment locally)
+    cmds:
+      - npx netlify dev
+
+  netlify:build:
+    desc: Build using Netlify build process
+    cmds:
+      - npx netlify build
+
+  netlify:serve:
+    desc: Build and serve production build with Netlify
+    cmds:
+      - npm run build
+      - npx netlify serve
